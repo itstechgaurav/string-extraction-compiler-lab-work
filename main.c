@@ -2,7 +2,7 @@
 #include<string.h>
 
 int isop(char op) {
-  char ops[] = "+-*/!&<>=%";
+  char ops[] = "+-*/!&<>=%|";
   int res = 0, i = 0;
   while(ops[i]) if(ops[i++] == op) res = 1;
   return res;
@@ -16,22 +16,11 @@ int ischar(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-int isidentifier(char substr[200], int identifiers, int numbers, int operators, int others) {
-  return (identifiers || numbers) && (ischar(substr[0]) || substr[0] == '_') && !operators && !others;
-}
-
 int main()
 {
     char mystr[200], substr[200];
     int identifiers = 0, others = 0, numbers = 0, operators = 0, ch = 0, si = 0;
-    int counts[] = {
-      0, // identifiers - 0
-      0, // numbers - 1
-      0, // alpha numeric - 2
-      0, // oprators - 3
-      0, // others - 4
-      0, // spaces - 5
-    };
+    int counts[6] = {0};
     printf("Enter a string: \n");
     gets(mystr);
     strcat(mystr, " ");
@@ -44,10 +33,9 @@ int main()
             else others = 1;
             substr[si] = current;
             si++;
-            // printf("%c - i=%d, op=%d, num=%d, oth=%d\n", current, identifiers, operators, numbers, others);
         } else {
             char msg[200];
-            int isidenti = isidentifier(substr, identifiers, numbers, operators, others);
+            int isidenti = (identifiers || numbers) && (ischar(substr[0]) || substr[0] == '_') && !operators && !others;
             if(isidenti) {
               strcpy(msg, "identifiers");
               counts[0]++;
@@ -58,9 +46,6 @@ int main()
             }else if((identifiers && numbers) && !isidenti) {
               strcpy(msg, "alpha numeric");
               counts[2]++;
-            } else if(numbers && (!operators && !identifiers && !others)) {
-              strcpy(msg, "numbers");
-              counts[1]++;
             }
             else if(operators && (!numbers && !identifiers && !others)) {
               strcpy(msg, "oprators");
